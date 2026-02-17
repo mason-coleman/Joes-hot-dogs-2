@@ -1,0 +1,98 @@
+<html>
+<head>
+    <title>Joe's Hotdog Stand</title>
+</head>
+<body>
+    <h1>Joe's Hotdog Stand</h1>
+    <div id="receipt"></div>
+
+    <script>
+        alert("Welcome to Joe's Hotdog Stand!\n\n" +
+              "Menu:\n" +
+              "Hotdog: $5.25\n" +
+              "French Fries: $3.75\n" +
+              "Drink: $2.50\n\n" +
+              "Special:\n" +
+              "Joe's Meal Deal (Hotdog + Fries + Drink): $10\n" +
+              "10% discount on orders over $30 (before tax)");
+
+        const prices = {
+            "Hotdog": 5.25,
+            "Fries": 3.75,
+            "Drink": 2.50
+        };
+        
+        //empty array for quants
+        let quantities = {};
+
+        // get user input
+        for (let item in prices) {
+            let quantity = parseInt(prompt("How many " + item + "(s) would you like?"));
+            //add to quantities array
+            quantities[item] = quantity;
+        }
+
+        const MEAL_DEAL_PRICE = 10.00;
+        const TAX_RATE = 0.0625;
+
+        // format with 2 dec
+        function showMoney(amount) {
+            //move decimal point. Round number. move decimal point back
+            let rounded = Math.round(amount * 100) / 100;
+            let dollars = parseInt(rounded);
+            //get cents. Move decimal point
+            let cents = parseInt((rounded - dollars) * 100);
+
+            if (cents < 10) {
+                return dollars + ".0" + cents;
+            } else {
+                return dollars + "." + cents;
+            }
+        }
+
+        // max umber of possible deals
+        let mealDeals = Math.min(quantities["Hotdog"], quantities["Fries"],
+            quantities["Drink"]
+        );
+
+
+        let subtotal = mealDeals * MEAL_DEAL_PRICE;
+
+        // Add remaining individual items
+        for (let item in prices) {
+            let remainingQty = quantities[item] - mealDeals;
+            subtotal += remainingQty * prices[item];
+        }
+
+        let originalSubtotal = subtotal;
+
+        let discount = 0;
+        if (subtotal >= 30) {
+            discount = subtotal * 0.10;
+            subtotal = subtotal - discount;
+        }
+
+        let tax = subtotal * TAX_RATE;
+        let finalTotal = subtotal + tax;
+
+        let receipt = "<h2>Your Order Summary</h2>";
+
+        for (let item in quantities) {
+            let itemTotal = quantities[item] * prices[item];
+            receipt += item + ": " + quantities[item] +
+                           " — $" + showMoney(itemTotal) + "<br>";
+        }
+
+        receipt += "<br>";
+        receipt += "Subtotal before discount: $" + showMoney(originalSubtotal) + "<br>";
+        receipt += "Discount: $" + showMoney(discount) + "<br>";
+        receipt += "Subtotal after discount: $" + showMoney(subtotal) + "<br>";
+        receipt += "Tax (6.25%): $" + showMoney(tax) + "<br><br>";
+        receipt += "<strong>Final Total: $" + showMoney(finalTotal) + "</strong>";
+        
+        // need to use .innerHTML (w3schools)
+        document.getElementById("receipt").innerHTML = receipt;
+
+    </script>
+</body>
+</html>
